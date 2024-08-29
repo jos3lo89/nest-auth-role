@@ -16,7 +16,16 @@ export class AuthService {
     const userFound = await this.userService.findOne(user.email);
 
     if (!userFound) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Usuario no encontrado');
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      user.password,
+      userFound.password,
+    );
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Correo o contraseña no coinciden');
     }
 
     const payload = {
